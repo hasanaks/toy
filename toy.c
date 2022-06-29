@@ -41,6 +41,7 @@ static void runFile(const char* fileName) {
   deinitVM(&vm);
 
   deinitChunk(&compiled);
+  free(source);
 }
 
 int main(int argc, char* argv[]) {
