@@ -1,4 +1,5 @@
 #include "scanner.h"
+#include "token.h"
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -38,19 +39,31 @@ static struct Token scanToken(struct Scanner* scanner, enum TokenType type) {
 
 static struct Token scanNumber(struct Scanner* scanner) {
   char c = scanner->string[scanner->current];
+  bool hadDot = c == '.';
 
-  if (isNumber(c) || c == '.') {
+  if (!isNumber(c)) { // single length number
+    if (hadDot) {
+      scanner->current++;
+    } else {
+      return scanToken(scanner, TOKEN_NUMBER);
+    }
+  }
+
+  while (isNumber(scanner->string[scanner->current])) {
     scanner->current++;
 
-    while (isNumber(scanner->string[scanner->current])) {
-      scanner->current++;
-
-      if (scanner->string[scanner->current] == '.') {
-        scanner->current++;
+    if (scanner->string[scanner->current] == '.') {
+      if (hadDot) {         // if we are parsing past the '.' then we stop
+        scanner->current--; // move before the '.'
+        return scanToken(scanner, TOKEN_NUMBER);
+      } else {              // continue parsing
+        scanner->current++; // move past the '.'
 
         while (isNumber(scanner->string[scanner->current])) {
           scanner->current++;
         }
+
+        return scanToken(scanner, TOKEN_NUMBER);
       }
     }
   }
@@ -116,9 +129,14 @@ struct Token scanNext(struct Scanner* scanner) {
       return scanToken(scanner, TOKEN_SLASH);
     case ';':
       return scanToken(scanner, TOKEN_SEMICOLON);
+    case '.':
+      if (isNumber(scanner->string[scanner->current])) {
+        return scanNumber(scanner);
+      } else {
+        return errorToken(scanner);
+      }
     default:
       if (isNumber(c)) {
-        // TODO: allow scanning a number starting with a '.'
         return scanNumber(scanner);
       } else if (isAlpha(c)) {
         return scanIdentifier(scanner);
