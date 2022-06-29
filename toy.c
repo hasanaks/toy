@@ -52,5 +52,6 @@ int main(int argc, char* argv[]) {
     runFile(fileName);
   } else {
     puts("usage: toy [FILE]");
+    return 1;
   }
 }
