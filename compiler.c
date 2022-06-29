@@ -1,6 +1,7 @@
 #include "compiler.h"
 
 #include "op.h"
+#include "token.h"
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -90,10 +91,17 @@ static void printStmt(struct Parser* parser) {
   consume(parser, TOKEN_SEMICOLON, "expected semicolon after print statement");
 }
 
+static void exprStmt(struct Parser* parser) {
+	expr(parser);
+	consume(parser, TOKEN_SEMICOLON, "expected semicolon after expression statement");
+}
+
 static void stmt(struct Parser* parser) {
   if (match(parser, TOKEN_PRINT)) {
     printStmt(parser);
-  }
+  } else {
+		exprStmt(parser);
+	}
 }
 
 static void program(struct Parser* parser) {

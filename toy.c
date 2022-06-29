@@ -7,7 +7,7 @@ int main(void) {
   struct VM vm;
   initVM(&vm);
 
-  struct Chunk chunk = compileString("print .25;");
+  struct Chunk chunk = compileString(".25;");
   runVM(&vm, &chunk);
   deinitChunk(&chunk);
 
