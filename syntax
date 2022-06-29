@@ -2,7 +2,7 @@ program = stmt* EOF
 
 stmt = printStmt | exprStmt
 
-printStmt = "print" stmt ";"
+printStmt = "print" expr ";"
 exprStmt = expr ";"
 
 expr = additiveExpr
