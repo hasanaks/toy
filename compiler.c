@@ -1,5 +1,6 @@
 #include "compiler.h"
 
+#include "chunk.h"
 #include "op.h"
 #include "token.h"
 
@@ -10,10 +11,15 @@ struct Parser {
   struct Scanner scanner;
   struct Chunk compiling;
   struct Token previous, current;
+
+	bool hadError;
 };
 
 static void resetParser(struct Parser* parser) {
   parser->scanner = (struct Scanner){0};
+	parser->previous = (struct Token){0};
+	parser->current = (struct Token){0};
+	parser->hadError = false;
   initChunk(&parser->compiling);
 }
 
@@ -35,14 +41,15 @@ static bool atEnd(struct Parser* parser) {
   return parser->current.type == TOKEN_EOF;
 }
 
-static void parseError(const char* error) {
+static void parseError(struct Parser* parser, const char* error) {
   fprintf(stderr, "Parsing Error: %s\n", error);
+	parser->hadError = true;
 }
 
 static void consume(struct Parser* parser, enum TokenType type,
                     const char* error) {
   if (!match(parser, type)) {
-    parseError(error);
+    parseError(parser, error);
   }
 }
 
@@ -57,7 +64,7 @@ static void atomExpr(struct Parser* parser) {
     emitByte(parser, OP_CONSTANT);
     emitByte(parser, addConstant(&parser->compiling, value));
   } else {
-    parseError("expected expression");
+    parseError(parser, "expected expression");
   }
 }
 
@@ -123,5 +130,9 @@ struct Chunk compileString(const char* string) {
   parser.scanner = scanner;
 
   program(&parser);
+	if (parser.hadError) {
+		deinitChunk(&parser.compiling);
+	}
+	
   return parser.compiling;
 }
