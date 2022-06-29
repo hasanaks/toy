@@ -12,14 +12,14 @@ struct Parser {
   struct Chunk compiling;
   struct Token previous, current;
 
-	bool hadError;
+  bool hadError;
 };
 
 static void resetParser(struct Parser* parser) {
   parser->scanner = (struct Scanner){0};
-	parser->previous = (struct Token){0};
-	parser->current = (struct Token){0};
-	parser->hadError = false;
+  parser->previous = (struct Token){0};
+  parser->current = (struct Token){0};
+  parser->hadError = false;
   initChunk(&parser->compiling);
 }
 
@@ -43,7 +43,7 @@ static bool atEnd(struct Parser* parser) {
 
 static void parseError(struct Parser* parser, const char* error) {
   fprintf(stderr, "Parsing Error: %s\n", error);
-	parser->hadError = true;
+  parser->hadError = true;
 }
 
 static void consume(struct Parser* parser, enum TokenType type,
@@ -99,16 +99,17 @@ static void printStmt(struct Parser* parser) {
 }
 
 static void exprStmt(struct Parser* parser) {
-	expr(parser);
-	consume(parser, TOKEN_SEMICOLON, "expected semicolon after expression statement");
+  expr(parser);
+  consume(parser, TOKEN_SEMICOLON,
+          "expected semicolon after expression statement");
 }
 
 static void stmt(struct Parser* parser) {
   if (match(parser, TOKEN_PRINT)) {
     printStmt(parser);
   } else {
-		exprStmt(parser);
-	}
+    exprStmt(parser);
+  }
 }
 
 static void program(struct Parser* parser) {
@@ -130,9 +131,9 @@ struct Chunk compileString(const char* string) {
   parser.scanner = scanner;
 
   program(&parser);
-	if (parser.hadError) {
-		deinitChunk(&parser.compiling);
-	}
-	
+  if (parser.hadError) {
+    deinitChunk(&parser.compiling);
+  }
+
   return parser.compiling;
 }

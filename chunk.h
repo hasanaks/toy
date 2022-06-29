@@ -1,8 +1,8 @@
 #pragma once
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdbool.h>
 
 #include "value.h"
 
@@ -13,7 +13,7 @@ struct ValueArray {
 };
 
 struct Chunk {
-	// 8 bit array
+  // 8 bit array
   uint8_t* code;
   size_t size;
   size_t length;
