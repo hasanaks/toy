@@ -8,6 +8,7 @@
 void initScanner(struct Scanner* scanner, const char* string) {
   scanner->start = 0;
   scanner->current = 0;
+  scanner->line = 1;
 
   scanner->string = string;
 }
@@ -17,9 +18,10 @@ static void skipWhitespace(struct Scanner* scanner) {
     char c = scanner->string[scanner->current];
 
     switch (c) {
+      case '\n':
+        scanner->line++;
       case ' ':
       case '\r':
-      case '\n':
       case '\t':
         break;
       default:
@@ -34,7 +36,7 @@ static bool isNumber(char c) { return c >= '0' && c <= '9'; }
 
 static struct Token scanToken(struct Scanner* scanner, enum TokenType type) {
   return makeToken(type, scanner->string + scanner->start,
-                   scanner->current - scanner->start);
+                   scanner->current - scanner->start, scanner->line);
 }
 
 static struct Token scanNumber(struct Scanner* scanner) {
@@ -111,7 +113,7 @@ static struct Token scanIdentifier(struct Scanner* scanner) {
 struct Token scanNext(struct Scanner* scanner) {
   skipWhitespace(scanner);
   if (atEnd(scanner)) {
-    return makeToken(TOKEN_EOF, NULL, 0);
+    return makeToken(TOKEN_EOF, NULL, 0, scanner->line);
   }
 
   scanner->start = scanner->current;

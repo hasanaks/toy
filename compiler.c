@@ -27,12 +27,13 @@ static void resetParser(struct Parser* parser) {
   initChunk(&parser->compiling);
 }
 
-static void parseError(struct Parser* parser, const char* error) {
+static void parseError(struct Parser* parser, struct Token token,
+                       const char* error) {
   if (parser->panic)
     return; // suppress other errors
   parser->panic = true;
 
-  fprintf(stderr, "Parsing Error: %s\n", error);
+  fprintf(stderr, "Parsing Error: %s at line %ld\n", error, token.line);
   parser->hadError = true;
 }
 
@@ -43,7 +44,7 @@ static void advance(struct Parser* parser) {
     parser->current = scanNext(&parser->scanner);
 
     if (parser->current.type == TOKEN_ERROR) {
-      parseError(parser, "unexpected token");
+      parseError(parser, parser->current, "unexpected token");
     } else {
       break;
     }
@@ -66,7 +67,7 @@ static bool atEnd(struct Parser* parser) {
 static void consume(struct Parser* parser, enum TokenType type,
                     const char* error) {
   if (!match(parser, type)) {
-    parseError(parser, error);
+    parseError(parser, parser->current, error);
   }
 }
 
@@ -81,7 +82,7 @@ static void atomExpr(struct Parser* parser) {
     emitByte(parser, OP_CONSTANT);
     emitByte(parser, addConstant(&parser->compiling, value));
   } else {
-    parseError(parser, "expected expression");
+    parseError(parser, parser->current, "expected expression");
   }
 }
 

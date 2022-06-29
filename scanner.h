@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 struct Scanner {
-  size_t start, current;
+  size_t start, current, line;
   const char* string;
 };
 

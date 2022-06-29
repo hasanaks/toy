@@ -21,6 +21,8 @@ struct Token {
   enum TokenType type;
   const char* start;
   size_t length;
+  size_t line;
 };
 
-struct Token makeToken(enum TokenType type, const char* start, size_t length);
+struct Token makeToken(enum TokenType type, const char* start, size_t length,
+                       size_t line);
