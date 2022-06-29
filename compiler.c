@@ -106,7 +106,7 @@ static void program(struct Parser* parser) {
   emitByte(parser, OP_RETURN);
 }
 
-struct Chunk parseString(const char* string) {
+struct Chunk compileString(const char* string) {
   struct Parser parser;
   resetParser(&parser);
 
