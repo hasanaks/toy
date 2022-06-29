@@ -6,6 +6,6 @@ printStmt = "print" stmt ";"
 exprStmt = expr ";"
 
 expr = additiveExpr
-additiveExpr = expr "+" expr | multiplicativeExpr
+additiveExpr = expr ("+" | "-") expr | multiplicativeExpr
 multiplicativeExpr = expr ("*" | "/") expr | atomExpr
 atomExpr = NUMBER
