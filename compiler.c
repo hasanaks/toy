@@ -12,6 +12,7 @@ struct Parser {
   struct Chunk compiling;
   struct Token previous, current;
 
+  bool panic;
   bool hadError;
 };
 
@@ -19,13 +20,34 @@ static void resetParser(struct Parser* parser) {
   parser->scanner = (struct Scanner){0};
   parser->previous = (struct Token){0};
   parser->current = (struct Token){0};
+
+  parser->panic = false;
   parser->hadError = false;
+
   initChunk(&parser->compiling);
+}
+
+static void parseError(struct Parser* parser, const char* error) {
+  if (parser->panic)
+    return; // suppress other errors
+  parser->panic = true;
+
+  fprintf(stderr, "Parsing Error: %s\n", error);
+  parser->hadError = true;
 }
 
 static void advance(struct Parser* parser) {
   parser->previous = parser->current;
-  parser->current = scanNext(&parser->scanner);
+
+  for (;;) {
+    parser->current = scanNext(&parser->scanner);
+
+    if (parser->current.type == TOKEN_ERROR) {
+      parseError(parser, "unexpected token");
+    } else {
+      break;
+    }
+  }
 }
 
 static bool match(struct Parser* parser, enum TokenType type) {
@@ -39,11 +61,6 @@ static bool match(struct Parser* parser, enum TokenType type) {
 
 static bool atEnd(struct Parser* parser) {
   return parser->current.type == TOKEN_EOF;
-}
-
-static void parseError(struct Parser* parser, const char* error) {
-  fprintf(stderr, "Parsing Error: %s\n", error);
-  parser->hadError = true;
 }
 
 static void consume(struct Parser* parser, enum TokenType type,
@@ -94,7 +111,7 @@ static void expr(struct Parser* parser) { additiveExpr(parser); }
 
 static void printStmt(struct Parser* parser) {
   expr(parser);
-  writeChunk(&parser->compiling, OP_PRINT);
+  emitByte(parser, OP_PRINT);
   consume(parser, TOKEN_SEMICOLON, "expected semicolon after print statement");
 }
 
@@ -112,11 +129,28 @@ static void stmt(struct Parser* parser) {
   }
 }
 
+static void synchronize(struct Parser* parser) {
+  parser->panic = false;
+
+  for (;;) {
+    switch (parser->current.type) {
+      case TOKEN_EOF:
+      case TOKEN_SEMICOLON:
+        return;
+      default:
+        advance(parser);
+    }
+  }
+}
+
 static void program(struct Parser* parser) {
   advance(parser);
 
   while (!atEnd(parser)) {
     stmt(parser);
+
+    if (parser->panic)
+      synchronize(parser);
   }
 
   emitByte(parser, OP_RETURN);
