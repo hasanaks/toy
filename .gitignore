@@ -1,3 +1,6 @@
-.cache/
+# executable
 toy
+
+# clangd stuff
+.cache/
 compile_commands.json
