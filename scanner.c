@@ -13,22 +13,40 @@ void initScanner(struct Scanner* scanner, const char* string) {
   scanner->string = string;
 }
 
+static bool atEnd(struct Scanner* scanner) {
+  return scanner->string[scanner->current] == '\0';
+}
+
 static void skipWhitespace(struct Scanner* scanner) {
   for (;;) {
     char c = scanner->string[scanner->current];
 
     switch (c) {
+      case '/': // skip comment
+        if (scanner->string[scanner->current + 1] ==
+            '/') { // not necessarily whitespace but ignored nonetheless
+          scanner->current += 2;
+
+          while (scanner->string[scanner->current] != '\n') {
+            if (atEnd(scanner)) {
+              return;
+            }
+
+            scanner->current++;
+          }
+        }
+        break;
       case '\n':
         scanner->line++;
+        // fall through
       case ' ':
       case '\r':
       case '\t':
+        scanner->current++;
         break;
       default:
         return;
     }
-
-    scanner->current++;
   }
 }
 
@@ -75,10 +93,6 @@ static struct Token scanNumber(struct Scanner* scanner) {
 
 static struct Token errorToken(struct Scanner* scanner) {
   return scanToken(scanner, TOKEN_ERROR);
-}
-
-static bool atEnd(struct Scanner* scanner) {
-  return scanner->string[scanner->current] == '\0';
 }
 
 static bool isAlpha(char c) {

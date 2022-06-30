@@ -137,6 +137,7 @@ static void synchronize(struct Parser* parser) {
     switch (parser->current.type) {
       case TOKEN_EOF:
       case TOKEN_SEMICOLON:
+        advance(parser);
         return;
       default:
         advance(parser);
