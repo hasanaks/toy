@@ -1,10 +1,32 @@
 #include <stdio.h>
 
+#include "chunk.h"
 #include "compiler.h"
 #include "vm.h"
 
+#define MAX_REPL_SIZE 256
+
 static void runRepl(void) {
-  // TODO: implement a repl
+  struct VM vm;
+	initVM(&vm);
+
+	char buffer[MAX_REPL_SIZE] = {0};
+
+	for (;;) {
+		printf("> ");
+		
+		char* err = fgets(buffer, MAX_REPL_SIZE, stdin);
+		if (err == NULL) {
+			printf("\n");
+			return;
+		}
+
+		struct Chunk compiled = compileString(buffer);
+		runVM(&vm, &compiled);
+		deinitChunk(&compiled);
+	}
+
+	deinitVM(&vm);
 }
 
 static char* readFile(const char* fileName) {
