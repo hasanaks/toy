@@ -8,25 +8,25 @@
 
 static void runRepl(void) {
   struct VM vm;
-	initVM(&vm);
+  initVM(&vm);
 
-	char buffer[MAX_REPL_SIZE] = {0};
+  char buffer[MAX_REPL_SIZE] = {0};
 
-	for (;;) {
-		printf("> ");
-		
-		char* err = fgets(buffer, MAX_REPL_SIZE, stdin);
-		if (err == NULL) {
-			printf("\n");
-			return;
-		}
+  for (;;) {
+    printf("> ");
 
-		struct Chunk compiled = compileString(buffer);
-		runVM(&vm, &compiled);
-		deinitChunk(&compiled);
-	}
+    char* err = fgets(buffer, MAX_REPL_SIZE, stdin);
+    if (err == NULL) {
+      printf("\n");
+      return;
+    }
 
-	deinitVM(&vm);
+    struct Chunk compiled = compileString(buffer);
+    runVM(&vm, &compiled);
+    deinitChunk(&compiled);
+  }
+
+  deinitVM(&vm);
 }
 
 static char* readFile(const char* fileName) {
@@ -56,6 +56,7 @@ static void runFile(const char* fileName) {
   }
 
   struct Chunk compiled = compileString(source);
+  free(source);
 
   struct VM vm;
   initVM(&vm);
@@ -63,7 +64,6 @@ static void runFile(const char* fileName) {
   deinitVM(&vm);
 
   deinitChunk(&compiled);
-  free(source);
 }
 
 int main(int argc, char* argv[]) {
