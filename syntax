@@ -1,6 +1,6 @@
 program = stmt* EOF
 
-stmt = printStmt | exprStmt
+stmt = printStmt | exprStmt | ";"
 
 printStmt = "print" expr ";"
 exprStmt = expr ";"

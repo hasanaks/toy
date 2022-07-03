@@ -130,7 +130,9 @@ static void exprStmt(struct Parser* parser) {
 static void stmt(struct Parser* parser) {
   if (match(parser, TOKEN_PRINT)) {
     printStmt(parser);
-  } else {
+  } else if (match(parser, TOKEN_SEMICOLON)) {
+		// do nothing
+	} else {
     exprStmt(parser);
   }
 }
