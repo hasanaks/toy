@@ -1,6 +1,7 @@
 #include "vm.h"
 
 #include "op.h"
+#include "value.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,6 +36,11 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
       case OP_CONSTANT: // push to value stack
         pushStack(vm, runningChunk->values.values[*(vm->ip++)]);
         break;
+      case OP_NEGATE: {
+        struct Value a = popStack(vm);
+        pushStack(vm, NUMBER_VALUE(-a.as.number));
+        break;
+      }
       case OP_ADD: {
         struct Value b = popStack(vm);
         struct Value a = popStack(vm);

@@ -7,7 +7,8 @@ exprStmt = expr ";"
 
 expr = additiveExpr
 additiveExpr = multiplicativeExpr ("+" | "-") multiplicativeExpr | multiplicativeExpr
-multiplicativeExpr = atomExpr ("*" | "/") atomExpr | atomExpr
+multiplicativeExpr = unaryExpr ("*" | "/") unaryExpr | unaryExpr
+unaryExpr = ("+" | "-") unaryExpr | atomExpr
 atomExpr = NUMBER | grouping
 
 grouping = '(' expr ')'

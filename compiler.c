@@ -91,13 +91,27 @@ static void atomExpr(struct Parser* parser) {
   }
 }
 
+static void unaryExpr(struct Parser* parser) {
+  if (match(parser, TOKEN_PLUS) || match(parser, TOKEN_MINUS)) {
+    struct Token operator= parser->previous;
+    unaryExpr(parser);
+
+    // no special opcode for TOKEN_PLUS
+    if (operator.type == TOKEN_MINUS) {
+      emitByte(parser, OP_NEGATE);
+    }
+  } else {
+    atomExpr(parser);
+  }
+}
+
 static void multiplicativeExpr(struct Parser* parser) {
-  atomExpr(parser);
+  unaryExpr(parser);
 
   if (match(parser, TOKEN_STAR) || match(parser, TOKEN_SLASH)) {
     enum OpCode code =
         parser->previous.type == TOKEN_STAR ? OP_MULTIPLY : OP_DIVIDE;
-    atomExpr(parser);
+    unaryExpr(parser);
     emitByte(parser, code);
   }
 }
