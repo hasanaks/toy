@@ -34,8 +34,10 @@ static void skipWhitespace(struct Scanner* scanner) {
 
             scanner->current++;
           }
+          break;
+        } else {
+          return;
         }
-        break;
       case '\n':
         scanner->line++;
         // fall through
