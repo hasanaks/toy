@@ -29,7 +29,8 @@ void writeChunk(struct Chunk* chunk, uint8_t byte) {
   if (chunk->length >= chunk->size) {
     size_t previousSize = chunk->size;
     chunk->size = nextArraySize(chunk->size);
-    chunk->code = reallocate(chunk->code, chunk->size, previousSize);
+    chunk->code =
+        reallocate(chunk->code, chunk->size, previousSize, sizeof(byte));
   }
 
   chunk->code[chunk->length++] = byte;
@@ -42,8 +43,7 @@ size_t addConstant(struct Chunk* chunk, struct Value value) {
     size_t previousSize = values->size;
     values->size = nextArraySize(values->size);
     values->values =
-        reallocate(values->values, sizeof(struct Value) * values->size,
-                   sizeof(struct Value) * previousSize);
+        reallocate(values->values, values->size, previousSize, sizeof(value));
   }
 
   values->values[values->length++] = value;
