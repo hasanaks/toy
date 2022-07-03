@@ -84,9 +84,9 @@ static void atomExpr(struct Parser* parser) {
     emitByte(parser, OP_CONSTANT);
     emitByte(parser, addConstant(&parser->compiling, value));
   } else if (match(parser, TOKEN_LPAREN)) { // grouping expr
-		expr(parser);
-		consume(parser, TOKEN_RPAREN, "expected ')'");
-	} else {
+    expr(parser);
+    consume(parser, TOKEN_RPAREN, "expected ')'");
+  } else {
     parseError(parser, parser->current, "expected expression");
   }
 }
@@ -131,8 +131,8 @@ static void stmt(struct Parser* parser) {
   if (match(parser, TOKEN_PRINT)) {
     printStmt(parser);
   } else if (match(parser, TOKEN_SEMICOLON)) {
-		// do nothing
-	} else {
+    // do nothing
+  } else {
     exprStmt(parser);
   }
 }
