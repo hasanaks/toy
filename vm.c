@@ -62,6 +62,11 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
       case OP_DIVIDE: {
         struct Value b = popStack(vm);
         struct Value a = popStack(vm);
+        if (b.as.number == 0.) {
+          printf("division by zero error\n");
+          return RUN_ERROR;
+        }
+
         pushStack(vm, NUMBER_VALUE(a.as.number / b.as.number));
         break;
       }
