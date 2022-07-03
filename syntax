@@ -6,8 +6,8 @@ printStmt = "print" expr ";"
 exprStmt = expr ";"
 
 expr = additiveExpr
-additiveExpr = expr ("+" | "-") expr | multiplicativeExpr
-multiplicativeExpr = expr ("*" | "/") expr | atomExpr
+additiveExpr = multiplicativeExpr ("+" | "-") multiplicativeExpr | multiplicativeExpr
+multiplicativeExpr = atomExpr ("*" | "/") atomExpr | atomExpr
 atomExpr = NUMBER | grouping
 
 grouping = '(' expr ')'
