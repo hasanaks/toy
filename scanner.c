@@ -145,6 +145,10 @@ struct Token scanNext(struct Scanner* scanner) {
       return scanToken(scanner, TOKEN_SLASH);
     case ';':
       return scanToken(scanner, TOKEN_SEMICOLON);
+    case '(':
+      return scanToken(scanner, TOKEN_LPAREN);
+		case ')':
+			return scanToken(scanner, TOKEN_RPAREN);
     case '.':
       if (isNumber(scanner->string[scanner->current])) {
         return scanNumber(scanner);

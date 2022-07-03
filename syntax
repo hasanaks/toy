@@ -8,4 +8,6 @@ exprStmt = expr ";"
 expr = additiveExpr
 additiveExpr = expr ("+" | "-") expr | multiplicativeExpr
 multiplicativeExpr = expr ("*" | "/") expr | atomExpr
-atomExpr = NUMBER
+atomExpr = NUMBER | grouping
+
+grouping = '(' expr ')'

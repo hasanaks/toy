@@ -1,6 +1,7 @@
 #include "debug.h"
 
 #include "op.h"
+#include "token.h"
 
 #include <stdio.h>
 
@@ -22,6 +23,12 @@ void debugToken(struct Token token) {
       break;
     case TOKEN_SEMICOLON:
       typeStr = "TOKEN_SEMICOLON";
+      break;
+    case TOKEN_LPAREN:
+      typeStr = "TOKEN_LPAREN";
+      break;
+    case TOKEN_RPAREN:
+      typeStr = "TOKEN_RPAREN";
       break;
     case TOKEN_IDENTIFIER:
       typeStr = "TOKEN_IDENTIFIER";

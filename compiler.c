@@ -75,13 +75,18 @@ static void emitByte(struct Parser* parser, uint8_t byte) {
   writeChunk(&parser->compiling, byte);
 }
 
+static void expr(struct Parser* parser);
+
 static void atomExpr(struct Parser* parser) {
   if (match(parser, TOKEN_NUMBER)) {
     double number = strtod(parser->previous.start, NULL);
     struct Value value = NUMBER_VALUE(number);
     emitByte(parser, OP_CONSTANT);
     emitByte(parser, addConstant(&parser->compiling, value));
-  } else {
+  } else if (match(parser, TOKEN_LPAREN)) { // grouping expr
+		expr(parser);
+		consume(parser, TOKEN_RPAREN, "expected ')'");
+	} else {
     parseError(parser, parser->current, "expected expression");
   }
 }
