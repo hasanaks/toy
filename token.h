@@ -15,6 +15,9 @@ enum TokenType {
   TOKEN_NUMBER,
 
   TOKEN_PRINT,
+  TOKEN_TRUE,
+  TOKEN_FALSE,
+
   TOKEN_EOF,
   TOKEN_ERROR,
 };

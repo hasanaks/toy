@@ -113,6 +113,17 @@ static struct Token scanKeyword(struct Scanner* scanner) {
       if (matchString(scanner, "rint", 1, 4)) {
         return scanToken(scanner, TOKEN_PRINT);
       }
+      break;
+    case 't':
+      if (matchString(scanner, "rue", 1, 3)) {
+        return scanToken(scanner, TOKEN_TRUE);
+      }
+      break;
+    case 'f':
+      if (matchString(scanner, "alse", 1, 4)) {
+        return scanToken(scanner, TOKEN_FALSE);
+      }
+      break;
   }
 
   return scanToken(scanner, TOKEN_IDENTIFIER);

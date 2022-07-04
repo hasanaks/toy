@@ -83,6 +83,10 @@ static void atomExpr(struct Parser* parser) {
     struct Value value = NUMBER_VALUE(number);
     emitByte(parser, OP_CONSTANT);
     emitByte(parser, addConstant(&parser->compiling, value));
+  } else if (match(parser, TOKEN_TRUE) || match(parser, TOKEN_FALSE)) {
+    bool value = parser->previous.type == TOKEN_TRUE ? true : false;
+    emitByte(parser, OP_CONSTANT);
+    emitByte(parser, addConstant(&parser->compiling, BOOL_VALUE(value)));
   } else if (match(parser, TOKEN_LPAREN)) { // grouping expr
     expr(parser);
     consume(parser, TOKEN_RPAREN, "expected ')'");

@@ -39,6 +39,12 @@ void debugToken(struct Token token) {
     case TOKEN_PRINT:
       typeStr = "TOKEN_PRINT";
       break;
+    case TOKEN_TRUE:
+      typeStr = "TOKEN_TRUE";
+      break;
+    case TOKEN_FALSE:
+      typeStr = "TOKEN_FALSE";
+      break;
     case TOKEN_EOF:
       typeStr = "TOKEN_EOF";
       break;
