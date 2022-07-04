@@ -112,7 +112,7 @@ static void unaryExpr(struct Parser* parser) {
 static void multiplicativeExpr(struct Parser* parser) {
   unaryExpr(parser);
 
-  if (match(parser, TOKEN_STAR) || match(parser, TOKEN_SLASH)) {
+  while (match(parser, TOKEN_STAR) || match(parser, TOKEN_SLASH)) {
     enum OpCode code =
         parser->previous.type == TOKEN_STAR ? OP_MULTIPLY : OP_DIVIDE;
     unaryExpr(parser);
@@ -123,7 +123,7 @@ static void multiplicativeExpr(struct Parser* parser) {
 static void additiveExpr(struct Parser* parser) {
   multiplicativeExpr(parser);
 
-  if (match(parser, TOKEN_PLUS) || match(parser, TOKEN_MINUS)) {
+  while (match(parser, TOKEN_PLUS) || match(parser, TOKEN_MINUS)) {
     enum OpCode code =
         parser->previous.type == TOKEN_PLUS ? OP_ADD : OP_SUBTRACT;
     multiplicativeExpr(parser);
