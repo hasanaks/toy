@@ -1,4 +1,5 @@
 #include "scanner.h"
+#include "debug.h"
 #include "token.h"
 
 #include <stdbool.h>
@@ -55,8 +56,11 @@ static void skipWhitespace(struct Scanner* scanner) {
 static bool isNumber(char c) { return c >= '0' && c <= '9'; }
 
 static struct Token scanToken(struct Scanner* scanner, enum TokenType type) {
-  return makeToken(type, scanner->string + scanner->start,
-                   scanner->current - scanner->start, scanner->line);
+  struct Token t = makeToken(type, scanner->string + scanner->start,
+                             scanner->current - scanner->start, scanner->line);
+  debugToken(t);
+
+  return t;
 }
 
 static struct Token scanNumber(struct Scanner* scanner) {
@@ -140,7 +144,9 @@ static struct Token scanIdentifier(struct Scanner* scanner) {
 struct Token scanNext(struct Scanner* scanner) {
   skipWhitespace(scanner);
   if (atEnd(scanner)) {
-    return makeToken(TOKEN_EOF, NULL, 0, scanner->line);
+		struct Token t = makeToken(TOKEN_EOF, NULL, 0, scanner->line);
+		debugToken(t);
+		return t;
   }
 
   scanner->start = scanner->current;
