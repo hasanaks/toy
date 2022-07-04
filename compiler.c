@@ -136,13 +136,10 @@ static void expr(struct Parser* parser) { additiveExpr(parser); }
 static void printStmt(struct Parser* parser) {
   expr(parser);
   emitByte(parser, OP_PRINT);
-  consume(parser, TOKEN_SEMICOLON, "expected semicolon after print statement");
 }
 
 static void exprStmt(struct Parser* parser) {
   expr(parser);
-  consume(parser, TOKEN_SEMICOLON,
-          "expected semicolon after expression statement");
 }
 
 static void stmt(struct Parser* parser) {

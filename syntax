@@ -2,8 +2,8 @@ program = stmt* EOF
 
 stmt = printStmt | exprStmt | ";"
 
-printStmt = "print" expr ";"
-exprStmt = expr ";"
+printStmt = "print" expr
+exprStmt = expr
 
 expr = additiveExpr
 additiveExpr = multiplicativeExpr ("+" | "-") multiplicativeExpr | multiplicativeExpr
