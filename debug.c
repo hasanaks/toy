@@ -5,55 +5,44 @@
 
 #include <stdio.h>
 
-void debugToken(struct Token token) {
-  const char* typeStr = NULL;
-
-  switch (token.type) {
+static const char* tokenTypeString(enum TokenType type) {
+  switch (type) {
     case TOKEN_PLUS:
-      typeStr = "TOKEN_PLUS";
-      break;
+      return "TOKEN_PLUS";
     case TOKEN_MINUS:
-      typeStr = "TOKEN_MINUS";
-      break;
+      return "TOKEN_MINUS";
     case TOKEN_STAR:
-      typeStr = "TOKEN_STAR";
-      break;
+      return "TOKEN_STAR";
     case TOKEN_SLASH:
-      typeStr = "TOKEN_SLASH";
-      break;
+      return "TOKEN_SLASH";
     case TOKEN_SEMICOLON:
-      typeStr = "TOKEN_SEMICOLON";
-      break;
+      return "TOKEN_SEMICOLON";
     case TOKEN_LPAREN:
-      typeStr = "TOKEN_LPAREN";
-      break;
+      return "TOKEN_LPAREN";
     case TOKEN_RPAREN:
-      typeStr = "TOKEN_RPAREN";
-      break;
+      return "TOKEN_RPAREN";
     case TOKEN_IDENTIFIER:
-      typeStr = "TOKEN_IDENTIFIER";
-      break;
+      return "TOKEN_IDENTIFIER";
     case TOKEN_NUMBER:
-      typeStr = "TOKEN_NUMBER";
-      break;
+      return "TOKEN_NUMBER";
     case TOKEN_PRINT:
-      typeStr = "TOKEN_PRINT";
-      break;
+      return "TOKEN_PRINT";
     case TOKEN_TRUE:
-      typeStr = "TOKEN_TRUE";
-      break;
+      return "TOKEN_TRUE";
     case TOKEN_FALSE:
-      typeStr = "TOKEN_FALSE";
-      break;
+      return "TOKEN_FALSE";
     case TOKEN_EOF:
-      typeStr = "TOKEN_EOF";
-      break;
+      return "TOKEN_EOF";
     case TOKEN_ERROR:
-      typeStr = "TOKEN_ERROR";
-      break;
+      return "TOKEN_ERROR";
+    default:
+      return "UNKNOWN_TOKEN";
   }
+}
 
-  printf("[%s, %.*s]\n", typeStr, (int)token.length, token.start);
+void debugToken(struct Token token) {
+  printf("[%s, %.*s]\n", tokenTypeString(token.type), (int)token.length,
+         token.start);
 }
 
 size_t oneOperandInstruction(char* string, uint8_t operand) {
