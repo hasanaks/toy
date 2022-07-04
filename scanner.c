@@ -39,9 +39,6 @@ static void skipWhitespace(struct Scanner* scanner) {
         } else {
           return;
         }
-      case '\n':
-        scanner->line++;
-        // fall through
       case ' ':
       case '\r':
       case '\t':
@@ -144,9 +141,9 @@ static struct Token scanIdentifier(struct Scanner* scanner) {
 struct Token scanNext(struct Scanner* scanner) {
   skipWhitespace(scanner);
   if (atEnd(scanner)) {
-		struct Token t = makeToken(TOKEN_EOF, NULL, 0, scanner->line);
-		debugToken(t);
-		return t;
+    struct Token t = makeToken(TOKEN_EOF, NULL, 0, scanner->line);
+    debugToken(t);
+    return t;
   }
 
   scanner->start = scanner->current;
@@ -154,6 +151,8 @@ struct Token scanNext(struct Scanner* scanner) {
   char c = scanner->string[scanner->current++];
 
   switch (c) {
+    case '\n':
+      return scanToken(scanner, TOKEN_NEWLINE);
     case '+':
       return scanToken(scanner, TOKEN_PLUS);
     case '-':

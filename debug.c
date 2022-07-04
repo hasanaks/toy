@@ -7,6 +7,8 @@
 
 static const char* tokenTypeString(enum TokenType type) {
   switch (type) {
+    case TOKEN_NEWLINE:
+      return "TOKEN_NEWLINE";
     case TOKEN_PLUS:
       return "TOKEN_PLUS";
     case TOKEN_MINUS:
@@ -35,12 +37,17 @@ static const char* tokenTypeString(enum TokenType type) {
       return "TOKEN_EOF";
     case TOKEN_ERROR:
       return "TOKEN_ERROR";
-    default:
-      return "UNKNOWN_TOKEN";
   }
+
+  return "UNKNOWN_TOKEN";
 }
 
 void debugToken(struct Token token) {
+	if (token.type == TOKEN_NEWLINE) {
+		token.start = "\\n";
+		token.length = 2;
+	}
+	
   printf("[%s, %.*s]\n", tokenTypeString(token.type), (int)token.length,
          token.start);
 }

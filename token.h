@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 enum TokenType {
+  TOKEN_NEWLINE,
   TOKEN_PLUS,
   TOKEN_MINUS,
   TOKEN_STAR,

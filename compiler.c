@@ -71,6 +71,17 @@ static void consume(struct Parser* parser, enum TokenType type,
   }
 }
 
+static void consumeEither(struct Parser* parser, enum TokenType types[],
+                          size_t ntypes, const char* error) {
+  for (size_t i = 0; i < ntypes; i++) {
+    if (match(parser, types[i])) {
+      return;
+    }
+  }
+
+  parseError(parser, parser->current, error);
+}
+
 static void emitByte(struct Parser* parser, uint8_t byte) {
   writeChunk(&parser->compiling, byte);
 }
@@ -133,13 +144,26 @@ static void additiveExpr(struct Parser* parser) {
 
 static void expr(struct Parser* parser) { additiveExpr(parser); }
 
+static void consumeStatementTerminator(struct Parser* parser) {
+
+  enum TokenType statementTerminators[] = {TOKEN_NEWLINE, TOKEN_EOF,
+                                           TOKEN_SEMICOLON};
+  size_t nStatementTerminators = 3;
+
+	consumeEither(parser, statementTerminators, nStatementTerminators, "expected ';' or newline at the end of statement");
+}
+
 static void printStmt(struct Parser* parser) {
   expr(parser);
   emitByte(parser, OP_PRINT);
+
+	consumeStatementTerminator(parser);
 }
 
 static void exprStmt(struct Parser* parser) {
   expr(parser);
+
+	consumeStatementTerminator(parser);
 }
 
 static void stmt(struct Parser* parser) {
