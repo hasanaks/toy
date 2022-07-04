@@ -2,6 +2,7 @@
 
 #include "chunk.h"
 #include "compiler.h"
+#include "debug.h"
 #include "vm.h"
 
 #define MAX_REPL_SIZE 256
@@ -22,6 +23,9 @@ static void runRepl(void) {
     }
 
     struct Chunk compiled = compileString(buffer);
+
+    debugChunk(compiled);
+
     runVM(&vm, &compiled);
     deinitChunk(&compiled);
   }

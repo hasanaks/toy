@@ -56,46 +56,44 @@ void debugToken(struct Token token) {
   printf("[%s, %.*s]\n", typeStr, (int)token.length, token.start);
 }
 
-static void singleInstruction(const char* string) {
-  printf("| %s |\n", string);
+size_t oneOperandInstruction(char* string, uint8_t operand) {
+  printf("%s, %d\n", string, operand);
+  return 2;
 }
 
-static void numberInstruction(const char* string, uint8_t number) {
-  printf("| %s, %d |\n", string, number);
+size_t simpleInstruction(char* string) {
+  printf("%s\n", string);
+  return 1;
 }
 
-static void printInstruction(uint8_t** instruction) {
-  switch (**instruction) {
+size_t printInstruction(uint8_t* code) {
+  enum OpCode instruction = *code;
+
+  switch (instruction) {
     case OP_RETURN:
-      singleInstruction("OP_RETURN");
-      break;
+      return simpleInstruction("RETURN");
     case OP_CONSTANT:
-      *instruction += 1;
-      numberInstruction("OP_CONSTANT", **instruction);
-      break;
+      return oneOperandInstruction("CONSTANT", code[1]);
+    case OP_NEGATE:
+      return simpleInstruction("NEGATE");
     case OP_ADD:
-      singleInstruction("OP_ADD");
-      break;
+      return simpleInstruction("ADD");
     case OP_SUBTRACT:
-      singleInstruction("OP_SUBTRACT");
-      break;
-    case OP_MULTIPLY:
-      singleInstruction("OP_MULTIPLY");
-      break;
+      return simpleInstruction("SUBTRACT");
     case OP_DIVIDE:
-      singleInstruction("OP_DIVIDE");
-      break;
+      return simpleInstruction("DIVIDE");
+    case OP_MULTIPLY:
+      return simpleInstruction("MULTIPLY");
     case OP_PRINT:
-      singleInstruction("OP_PRINT");
-      break;
+      return simpleInstruction("PRINT");
+    default:
+      return simpleInstruction("UNKNOWN");
   }
 }
 
 void debugChunk(struct Chunk chunk) {
-  uint8_t* current = chunk.code;
-
-  while (current != chunk.code + chunk.length) {
-    printInstruction(&current);
-    current++;
-  }
+  puts("\n==DECOMPILED CHUNK START==\n");
+  for (size_t i = 0; i < chunk.length; i += printInstruction(&chunk.code[i]))
+    ;
+  puts("\n==DECOMPILED CHUNK END==\n");
 }
