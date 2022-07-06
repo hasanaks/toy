@@ -5,10 +5,14 @@ stmt = printStmt | exprStmt | ";"
 printStmt = "print" expr (";" | NEWLINE)
 exprStmt = expr (";" | NEWLINE)
 
-expr = additiveExpr
+expr = orExpr
+orExpr = andExpr "or" andExpr | andExpr
+andExpr = equalityExpr "and" equalityExpr | equalityExpr
+equalityExpr = comparisonExpr ("==" | "!=") comparisonExpr | comparisonExpr
+comparisonExpr = additiveExpr (">" | "<" | "<=" | ">=") additiveExpr | additiveExpr
 additiveExpr = multiplicativeExpr ("+" | "-") multiplicativeExpr | multiplicativeExpr
 multiplicativeExpr = unaryExpr ("*" | "/") unaryExpr | unaryExpr
-unaryExpr = ("+" | "-") unaryExpr | atomExpr
+unaryExpr = ("+" | "-" | "!") unaryExpr | atomExpr
 atomExpr = NUMBER | grouping
 
 grouping = '(' expr ')'

@@ -37,17 +37,35 @@ static const char* tokenTypeString(enum TokenType type) {
       return "TOKEN_EOF";
     case TOKEN_ERROR:
       return "TOKEN_ERROR";
+    case TOKEN_NOT:
+      return "TOKEN_NOT";
+    case TOKEN_EQUALS:
+      return "TOKEN_EQUALS";
+    case TOKEN_NOT_EQUALS:
+      return "TOKEN_NOT_EQUALS";
+    case TOKEN_GREATER:
+      return "TOKEN_GREATER";
+    case TOKEN_GREATER_EQUALS:
+      return "TOKEN_GREATER_EQUALS";
+    case TOKEN_LESSER:
+      return "TOKEN_LESSER";
+    case TOKEN_LESSER_EQUALS:
+      return "TOKEN_LESSER_EQUALS";
+    case TOKEN_AND:
+      return "TOKEN_AND";
+    case TOKEN_OR:
+      return "TOKEN_OR";
   }
 
   return "UNKNOWN_TOKEN";
 }
 
 void debugToken(struct Token token) {
-	if (token.type == TOKEN_NEWLINE) {
-		token.start = "\\n";
-		token.length = 2;
-	}
-	
+  if (token.type == TOKEN_NEWLINE) {
+    token.start = "\\n";
+    token.length = 2;
+  }
+
   printf("[%s, %.*s]\n", tokenTypeString(token.type), (int)token.length,
          token.start);
 }
@@ -82,9 +100,27 @@ size_t printInstruction(uint8_t* code) {
       return simpleInstruction("MULTIPLY");
     case OP_PRINT:
       return simpleInstruction("PRINT");
-    default:
-      return simpleInstruction("UNKNOWN");
+    case OP_NOT:
+      return simpleInstruction("NOT");
+    case OP_AND:
+      return simpleInstruction("AND");
+    case OP_OR:
+      return simpleInstruction("OR");
+    case OP_EQUAL:
+      return simpleInstruction("EQUAL");
+    case OP_NOT_EQUAL:
+      return simpleInstruction("NOT_EQUAL");
+    case OP_GREATER:
+      return simpleInstruction("GREATER");
+    case OP_GREATER_EQUAL:
+      return simpleInstruction("GREATER_EQUAL");
+    case OP_LESSER:
+      return simpleInstruction("LESSER");
+    case OP_LESSER_EQUAL:
+      return simpleInstruction("LESSER_EQUAL");
   }
+
+  return simpleInstruction("UNKNOWN");
 }
 
 void debugChunk(struct Chunk chunk) {

@@ -125,6 +125,16 @@ static struct Token scanKeyword(struct Scanner* scanner) {
         return scanToken(scanner, TOKEN_FALSE);
       }
       break;
+    case 'a':
+      if (matchString(scanner, "nd", 1, 2)) {
+        return scanToken(scanner, TOKEN_AND);
+      }
+      break;
+    case 'o':
+      if (matchString(scanner, "r", 1, 1)) {
+        return scanToken(scanner, TOKEN_OR);
+      }
+      break;
   }
 
   return scanToken(scanner, TOKEN_IDENTIFIER);
@@ -172,6 +182,29 @@ struct Token scanNext(struct Scanner* scanner) {
         return scanNumber(scanner);
       } else {
         return errorToken(scanner);
+      }
+    case '=':
+      if (scanner->string[scanner->current] == '=') {
+        return scanner->string++, scanToken(scanner, TOKEN_EQUALS);
+      }
+      break;
+    case '!':
+      if (scanner->string[scanner->current] == '=') {
+        return scanner->current++, scanToken(scanner, TOKEN_NOT_EQUALS);
+      } else {
+        return scanToken(scanner, TOKEN_NOT);
+      }
+    case '>':
+      if (scanner->string[scanner->current] == '=') {
+        return scanner->current++, scanToken(scanner, TOKEN_GREATER_EQUALS);
+      } else {
+        return scanToken(scanner, TOKEN_GREATER);
+      }
+    case '<':
+      if (scanner->string[scanner->current] == '=') {
+        return scanner->current++, scanToken(scanner, TOKEN_LESSER_EQUALS);
+      } else {
+        return scanToken(scanner, TOKEN_LESSER);
       }
     default:
       if (isNumber(c)) {

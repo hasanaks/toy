@@ -25,6 +25,18 @@ static void printValue(struct Value* v) {
   }
 }
 
+// assumes types of values are the same
+static bool compareValue(struct Value* a, struct Value* b) {
+  switch (a->type) {
+    case VALUE_NUMBER:
+      return a->as.number == b->as.number;
+    case VALUE_BOOL:
+      return a->as._bool == b->as._bool;
+  }
+
+  return false;
+}
+
 static void pushStack(struct VM* vm, struct Value value) {
   *(vm->stackTop++) = value;
 }
@@ -57,7 +69,7 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
       case OP_NEGATE: {
         struct Value a = popStack(vm);
         if (a.type != VALUE_NUMBER) {
-          return runtimeError("can only negate numbers");
+          return runtimeError("operator '-' is only defined for numbers");
         }
 
         pushStack(vm, NUMBER_VALUE(-a.as.number));
@@ -67,7 +79,7 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
         struct Value b = popStack(vm);
         struct Value a = popStack(vm);
         if (a.type != VALUE_NUMBER || b.type != VALUE_NUMBER) {
-          return runtimeError("can only add numbers");
+          return runtimeError("operator '+' is only defined for numbers");
         }
 
         pushStack(vm, NUMBER_VALUE(a.as.number + b.as.number));
@@ -77,7 +89,7 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
         struct Value b = popStack(vm);
         struct Value a = popStack(vm);
         if (a.type != VALUE_NUMBER || b.type != VALUE_NUMBER) {
-          return runtimeError("can only subtract numbers");
+          return runtimeError("operator '-' is only defined for numbers");
         }
 
         pushStack(vm, NUMBER_VALUE(a.as.number - b.as.number));
@@ -87,7 +99,7 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
         struct Value b = popStack(vm);
         struct Value a = popStack(vm);
         if (a.type != VALUE_NUMBER || b.type != VALUE_NUMBER) {
-          return runtimeError("can only multiply numbers");
+          return runtimeError("operator '*' is only defined for numbers");
         }
 
         pushStack(vm, NUMBER_VALUE(a.as.number * b.as.number));
@@ -97,7 +109,7 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
         struct Value b = popStack(vm);
         struct Value a = popStack(vm);
         if (a.type != VALUE_NUMBER || b.type != VALUE_NUMBER) {
-          return runtimeError("can only divide numbers");
+          return runtimeError("operator '/' is only defined for numbers");
         }
 
         if (b.as.number == 0.) {
@@ -105,6 +117,95 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
         }
 
         pushStack(vm, NUMBER_VALUE(a.as.number / b.as.number));
+        break;
+      }
+      case OP_NOT: {
+        struct Value a = popStack(vm);
+        if (a.type != VALUE_BOOL) {
+          return runtimeError("operator '!' is only defined for bools");
+        }
+
+        pushStack(vm, BOOL_VALUE(!a.as._bool));
+        break;
+      }
+      case OP_AND: {
+        struct Value b = popStack(vm);
+        struct Value a = popStack(vm);
+        if (a.type != VALUE_BOOL || b.type != VALUE_BOOL) {
+          return runtimeError("operator 'and' is only defined for bools");
+        }
+
+        pushStack(vm, BOOL_VALUE(a.as._bool && b.as._bool));
+        break;
+      }
+      case OP_OR: {
+        struct Value b = popStack(vm);
+        struct Value a = popStack(vm);
+        if (a.type != VALUE_BOOL || b.type != VALUE_BOOL) {
+          return runtimeError("operator 'or' is only defined for bools");
+        }
+
+        pushStack(vm, BOOL_VALUE(a.as._bool || b.as._bool));
+        break;
+      }
+      case OP_EQUAL: {
+        struct Value b = popStack(vm);
+        struct Value a = popStack(vm);
+        if (a.type != b.type) {
+          return runtimeError("operator '==' only allows comparing same types");
+        }
+
+        pushStack(vm, BOOL_VALUE(compareValue(&a, &b)));
+        break;
+      }
+      case OP_NOT_EQUAL: {
+        struct Value b = popStack(vm);
+        struct Value a = popStack(vm);
+        if (a.type != b.type) {
+          return runtimeError("operator '!=' only allows comparing same types");
+        }
+
+        pushStack(vm, BOOL_VALUE(!compareValue(&a, &b)));
+        break;
+      }
+      case OP_GREATER: {
+        struct Value b = popStack(vm);
+        struct Value a = popStack(vm);
+        if (a.type != VALUE_NUMBER || b.type != VALUE_NUMBER) {
+          return runtimeError("operator '>' is only implemented for numbers");
+        }
+
+        pushStack(vm, BOOL_VALUE(a.as.number > b.as.number));
+        break;
+      }
+      case OP_GREATER_EQUAL: {
+        struct Value b = popStack(vm);
+        struct Value a = popStack(vm);
+        if (a.type != VALUE_NUMBER || b.type != VALUE_NUMBER) {
+          return runtimeError("operator '>=' is only implemented for numbers");
+        }
+
+        pushStack(vm, BOOL_VALUE(a.as.number >= b.as.number));
+        break;
+      }
+      case OP_LESSER: {
+        struct Value b = popStack(vm);
+        struct Value a = popStack(vm);
+        if (a.type != VALUE_NUMBER || b.type != VALUE_NUMBER) {
+          return runtimeError("operator '<' is only implemented for numbers");
+        }
+
+        pushStack(vm, BOOL_VALUE(a.as.number < b.as.number));
+        break;
+      }
+      case OP_LESSER_EQUAL: {
+        struct Value b = popStack(vm);
+        struct Value a = popStack(vm);
+        if (a.type != VALUE_NUMBER || b.type != VALUE_NUMBER) {
+          return runtimeError("operator '<=' is only implemented for numbers");
+        }
+
+        pushStack(vm, BOOL_VALUE(a.as.number <= b.as.number));
         break;
       }
       case OP_PRINT: {

@@ -5,6 +5,7 @@
 #include "token.h"
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdio.h>
 
 struct Parser {
@@ -107,13 +108,16 @@ static void atomExpr(struct Parser* parser) {
 }
 
 static void unaryExpr(struct Parser* parser) {
-  if (match(parser, TOKEN_PLUS) || match(parser, TOKEN_MINUS)) {
+  if (match(parser, TOKEN_PLUS) || match(parser, TOKEN_MINUS) ||
+      match(parser, TOKEN_NOT)) {
     struct Token operator= parser->previous;
     unaryExpr(parser);
 
     // no special opcode for TOKEN_PLUS
     if (operator.type == TOKEN_MINUS) {
       emitByte(parser, OP_NEGATE);
+    } else if (operator.type == TOKEN_NOT) {
+      emitByte(parser, OP_NOT);
     }
   } else {
     atomExpr(parser);
@@ -142,7 +146,63 @@ static void additiveExpr(struct Parser* parser) {
   }
 }
 
-static void expr(struct Parser* parser) { additiveExpr(parser); }
+static void comparisonExpr(struct Parser* parser) {
+  additiveExpr(parser);
+
+  while (match(parser, TOKEN_GREATER) || match(parser, TOKEN_GREATER_EQUALS) ||
+         match(parser, TOKEN_LESSER) || match(parser, TOKEN_LESSER_EQUALS)) {
+    struct Token operator= parser->previous;
+
+    additiveExpr(parser);
+
+    switch (operator.type) {
+      case TOKEN_GREATER:
+        emitByte(parser, OP_GREATER);
+        break;
+      case TOKEN_GREATER_EQUALS:
+        emitByte(parser, OP_GREATER_EQUAL);
+        break;
+      case TOKEN_LESSER:
+        emitByte(parser, OP_LESSER);
+        break;
+      case TOKEN_LESSER_EQUALS:
+        emitByte(parser, OP_LESSER_EQUAL);
+        break;
+      default:; // unreachable
+    }
+  }
+}
+
+static void equalityExpr(struct Parser* parser) {
+  comparisonExpr(parser);
+
+  while (match(parser, TOKEN_EQUALS) || match(parser, TOKEN_NOT_EQUALS)) {
+    enum OpCode code =
+        parser->previous.type == TOKEN_EQUALS ? OP_EQUAL : OP_NOT_EQUAL;
+    comparisonExpr(parser);
+    emitByte(parser, code);
+  }
+}
+
+static void andExpr(struct Parser* parser) {
+  equalityExpr(parser);
+
+  while (match(parser, TOKEN_AND)) {
+    equalityExpr(parser);
+    emitByte(parser, OP_AND);
+  }
+}
+
+static void orExpr(struct Parser* parser) {
+  andExpr(parser);
+
+  while (match(parser, TOKEN_OR)) {
+    andExpr(parser);
+    emitByte(parser, OP_OR);
+  }
+}
+
+static void expr(struct Parser* parser) { orExpr(parser); }
 
 static void consumeStatementTerminator(struct Parser* parser) {
 
@@ -150,20 +210,21 @@ static void consumeStatementTerminator(struct Parser* parser) {
                                            TOKEN_SEMICOLON};
   size_t nStatementTerminators = 3;
 
-	consumeEither(parser, statementTerminators, nStatementTerminators, "expected ';' or newline at the end of statement");
+  consumeEither(parser, statementTerminators, nStatementTerminators,
+                "expected ';' or newline at the end of statement");
 }
 
 static void printStmt(struct Parser* parser) {
   expr(parser);
   emitByte(parser, OP_PRINT);
 
-	consumeStatementTerminator(parser);
+  consumeStatementTerminator(parser);
 }
 
 static void exprStmt(struct Parser* parser) {
   expr(parser);
 
-	consumeStatementTerminator(parser);
+  consumeStatementTerminator(parser);
 }
 
 static void stmt(struct Parser* parser) {
