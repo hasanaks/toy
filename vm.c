@@ -21,7 +21,6 @@ static bool compareValue(struct Value* a, struct Value* b) {
       return a->as.number == b->as.number;
     case VALUE_BOOL:
       return a->as._bool == b->as._bool;
-    case VALUE_NONE:;
   }
 
   return false;

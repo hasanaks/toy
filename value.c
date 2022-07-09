@@ -9,7 +9,5 @@ void printValue(struct Value* v) {
     case VALUE_BOOL:
       printf("%s\n", v->as._bool == true ? "true" : "false");
       break;
-    case VALUE_NONE:
-      break;
   }
 }
