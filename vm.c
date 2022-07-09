@@ -59,6 +59,9 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
       case OP_CONSTANT: // push to value stack
         pushStack(vm, runningChunk->values.values[*(vm->ip++)]);
         break;
+      case OP_POP:
+	popStack(vm);
+	break;
       case OP_NEGATE: {
         struct Value a = popStack(vm);
         if (a.type != VALUE_NUMBER) {

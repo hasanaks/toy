@@ -237,8 +237,8 @@ static void consumeStatementTerminator(struct Parser* parser) {
 
 static void exprStmt(struct Parser* parser) {
   expr(parser);
-
   consumeStatementTerminator(parser);
+  emitByte(parser, OP_POP);
 }
 
 static void stmt(struct Parser* parser) {
