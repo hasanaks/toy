@@ -178,24 +178,30 @@ struct Token scanNext(struct Scanner* scanner) {
       }
     case '=':
       if (scanner->string[scanner->current] == '=') {
-        return scanner->string++, scanToken(scanner, TOKEN_EQUALS);
+        scanner->current++;
+        return scanToken(scanner, TOKEN_EQUALS_EQUALS);
+      } else {
+        return scanToken(scanner, TOKEN_EQUALS);
       }
       break;
     case '!':
       if (scanner->string[scanner->current] == '=') {
-        return scanner->current++, scanToken(scanner, TOKEN_NOT_EQUALS);
+        scanner->current++;
+        return scanToken(scanner, TOKEN_NOT_EQUALS);
       } else {
         return scanToken(scanner, TOKEN_NOT);
       }
     case '>':
       if (scanner->string[scanner->current] == '=') {
-        return scanner->current++, scanToken(scanner, TOKEN_GREATER_EQUALS);
+        scanner->current++;
+        return scanToken(scanner, TOKEN_GREATER_EQUALS);
       } else {
         return scanToken(scanner, TOKEN_GREATER);
       }
     case '<':
       if (scanner->string[scanner->current] == '=') {
-        return scanner->current++, scanToken(scanner, TOKEN_LESSER_EQUALS);
+        scanner->current++;
+        return scanToken(scanner, TOKEN_LESSER_EQUALS);
       } else {
         return scanToken(scanner, TOKEN_LESSER);
       }

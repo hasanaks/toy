@@ -180,9 +180,10 @@ static void comparisonExpr(struct Parser* parser) {
 static void equalityExpr(struct Parser* parser) {
   comparisonExpr(parser);
 
-  while (match(parser, TOKEN_EQUALS) || match(parser, TOKEN_NOT_EQUALS)) {
+  while (match(parser, TOKEN_EQUALS_EQUALS) ||
+         match(parser, TOKEN_NOT_EQUALS)) {
     enum OpCode code =
-        parser->previous.type == TOKEN_EQUALS ? OP_EQUAL : OP_NOT_EQUAL;
+        parser->previous.type == TOKEN_EQUALS_EQUALS ? OP_EQUAL : OP_NOT_EQUAL;
     comparisonExpr(parser);
     emitByte(parser, code);
   }

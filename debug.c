@@ -39,6 +39,8 @@ static const char* tokenTypeString(enum TokenType type) {
       return "TOKEN_NOT";
     case TOKEN_EQUALS:
       return "TOKEN_EQUALS";
+    case TOKEN_EQUALS_EQUALS:
+      return "TOKEN_EQUALS_EQUALS";
     case TOKEN_NOT_EQUALS:
       return "TOKEN_NOT_EQUALS";
     case TOKEN_GREATER:
