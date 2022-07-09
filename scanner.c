@@ -110,11 +110,6 @@ static bool matchString(struct Scanner* scanner, const char* rest,
 
 static struct Token scanKeyword(struct Scanner* scanner) {
   switch (scanner->string[scanner->start]) {
-    case 'p':
-      if (matchString(scanner, "rint", 1, 4)) {
-        return scanToken(scanner, TOKEN_PRINT);
-      }
-      break;
     case 't':
       if (matchString(scanner, "rue", 1, 3)) {
         return scanToken(scanner, TOKEN_TRUE);

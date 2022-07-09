@@ -3,6 +3,7 @@
 #include "chunk.h"
 #include "compiler.h"
 #include "debug.h"
+#include "value.h"
 #include "vm.h"
 
 #define MAX_REPL_SIZE 256
@@ -23,10 +24,15 @@ static void runRepl(void) {
     }
 
     struct Chunk compiled = compileString(buffer);
-
     debugChunk(compiled);
 
     runVM(&vm, &compiled);
+
+    // if stackTop is not at the bottom
+    if (vm.stackTop != vm.stack) {
+      printValue(vm.stackTop - 1);
+    }
+
     deinitChunk(&compiled);
   }
 

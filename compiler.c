@@ -214,13 +214,6 @@ static void consumeStatementTerminator(struct Parser* parser) {
                 "expected ';' or newline at the end of statement");
 }
 
-static void printStmt(struct Parser* parser) {
-  expr(parser);
-  emitByte(parser, OP_PRINT);
-
-  consumeStatementTerminator(parser);
-}
-
 static void exprStmt(struct Parser* parser) {
   expr(parser);
 
@@ -228,9 +221,7 @@ static void exprStmt(struct Parser* parser) {
 }
 
 static void stmt(struct Parser* parser) {
-  if (match(parser, TOKEN_PRINT)) {
-    printStmt(parser);
-  } else if (match(parser, TOKEN_SEMICOLON)) {
+  if (match(parser, TOKEN_SEMICOLON) || match(parser, TOKEN_NEWLINE)) {
     // do nothing
   } else {
     exprStmt(parser);

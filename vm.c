@@ -14,17 +14,6 @@ void initVM(struct VM* vm) {
 
 void deinitVM(struct VM* vm) { vm->ip = NULL; }
 
-static void printValue(struct Value* v) {
-  switch (v->type) {
-    case VALUE_NUMBER:
-      printf("%.16g\n", v->as.number);
-      break;
-    case VALUE_BOOL:
-      printf("%s\n", v->as._bool == true ? "true" : "false");
-      break;
-  }
-}
-
 // assumes types of values are the same
 static bool compareValue(struct Value* a, struct Value* b) {
   switch (a->type) {
@@ -36,6 +25,8 @@ static bool compareValue(struct Value* a, struct Value* b) {
 
   return false;
 }
+
+static void resetStack(struct VM* vm) { vm->stackTop = vm->stack; }
 
 static void pushStack(struct VM* vm, struct Value value) {
   *(vm->stackTop++) = value;
@@ -60,6 +51,8 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
   vm->ip = runningChunk->code;
   if (vm->ip == NULL)
     return RUN_ERROR;
+
+  resetStack(vm);
 
   for (;;) {
     switch (*(vm->ip++)) {
@@ -206,11 +199,6 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
         }
 
         pushStack(vm, BOOL_VALUE(a.as.number <= b.as.number));
-        break;
-      }
-      case OP_PRINT: {
-        struct Value a = popStack(vm);
-        printValue(&a);
         break;
       }
       case OP_RETURN:

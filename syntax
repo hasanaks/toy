@@ -1,8 +1,7 @@
 program = stmt* EOF
 
-stmt = printStmt | exprStmt | ";"
+stmt = exprStmt | ";" | NEWLINE
 
-printStmt = "print" expr (";" | NEWLINE)
 exprStmt = expr (";" | NEWLINE)
 
 expr = orExpr

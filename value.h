@@ -17,3 +17,5 @@ struct Value {
 
 #define NUMBER_VALUE(value) ((struct Value){VALUE_NUMBER, {.number = (value)}})
 #define BOOL_VALUE(value) ((struct Value){VALUE_BOOL, {._bool = (value)}})
+
+void printValue(struct Value* v);

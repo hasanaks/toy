@@ -27,8 +27,6 @@ static const char* tokenTypeString(enum TokenType type) {
       return "TOKEN_IDENTIFIER";
     case TOKEN_NUMBER:
       return "TOKEN_NUMBER";
-    case TOKEN_PRINT:
-      return "TOKEN_PRINT";
     case TOKEN_TRUE:
       return "TOKEN_TRUE";
     case TOKEN_FALSE:
@@ -98,8 +96,6 @@ size_t printInstruction(uint8_t* code) {
       return simpleInstruction("DIVIDE");
     case OP_MULTIPLY:
       return simpleInstruction("MULTIPLY");
-    case OP_PRINT:
-      return simpleInstruction("PRINT");
     case OP_NOT:
       return simpleInstruction("NOT");
     case OP_AND:

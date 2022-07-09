@@ -17,5 +17,4 @@ enum OpCode {
   OP_GREATER_EQUAL,
   OP_LESSER,
   OP_LESSER_EQUAL,
-  OP_PRINT,
 };
