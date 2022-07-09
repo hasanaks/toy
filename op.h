@@ -11,6 +11,7 @@ enum OpCode {
   OP_NOT,
   OP_AND,
   OP_OR,
+  OP_ASSIGNMENT,
   OP_EQUAL,
   OP_NOT_EQUAL,
   OP_GREATER,

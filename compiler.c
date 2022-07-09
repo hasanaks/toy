@@ -106,6 +106,8 @@ static void atomExpr(struct Parser* parser) {
   } else if (match(parser, TOKEN_LPAREN)) { // grouping expr
     expr(parser);
     consume(parser, TOKEN_RPAREN, "expected ')'");
+  } else if (match(parser, TOKEN_IDENTIFIER)) {
+    // ignore for now
   } else {
     parseError(parser, parser->current, "expected expression");
   }
@@ -207,7 +209,21 @@ static void orExpr(struct Parser* parser) {
   }
 }
 
-static void expr(struct Parser* parser) { orExpr(parser); }
+static void assignmentExpr(struct Parser* parser) {
+  orExpr(parser);
+
+  struct Token last = parser->previous;
+  while (match(parser, TOKEN_EQUALS)) {
+    if (last.type != TOKEN_IDENTIFIER) {
+      parseError(parser, last, "not a valid assignment target");
+    }
+
+    orExpr(parser);
+    emitByte(parser, OP_ASSIGNMENT);
+  }
+}
+
+static void expr(struct Parser* parser) { assignmentExpr(parser); }
 
 static void consumeStatementTerminator(struct Parser* parser) {
 

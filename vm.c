@@ -141,6 +141,9 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
         pushStack(vm, BOOL_VALUE(a.as._bool || b.as._bool));
         break;
       }
+      case OP_ASSIGNMENT: {
+        return RUN_ERROR;
+      }
       case OP_EQUAL: {
         struct Value b = popStack(vm);
         struct Value a = popStack(vm);
