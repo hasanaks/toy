@@ -68,6 +68,17 @@ void debugToken(struct Token token) {
          token.start);
 }
 
+void debugScanner(struct Scanner scanner) {
+  for (;;) {
+    struct Token t = scanNext(&scanner);
+    debugToken(t);
+
+    if (t.type == TOKEN_EOF) {
+      return;
+    }
+  }
+}
+
 size_t oneOperandInstruction(char* string, uint8_t operand) {
   printf("%s, %d\n", string, operand);
   return 2;

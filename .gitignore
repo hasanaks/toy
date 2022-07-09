@@ -1,5 +1,6 @@
 # executable
 toy
+debug
 
 # clangd stuff
 .cache/

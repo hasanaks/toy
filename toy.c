@@ -2,11 +2,14 @@
 
 #include "chunk.h"
 #include "compiler.h"
-#include "debug.h"
 #include "value.h"
 #include "vm.h"
 
 #define MAX_REPL_SIZE 256
+
+#ifdef PRINT_DEBUG
+#include "debug.h"
+#endif
 
 static void runRepl(void) {
   struct VM vm;
@@ -24,12 +27,15 @@ static void runRepl(void) {
     }
 
     struct Chunk compiled = compileString(buffer);
-    debugChunk(compiled);
 
-    runVM(&vm, &compiled);
+#ifdef PRINT_DEBUG
+    debugChunk(compiled);
+#endif
+
+    enum RunResult result = runVM(&vm, &compiled);
 
     // if stackTop is not at the bottom
-    if (vm.stackTop != vm.stack) {
+    if (vm.stackTop != vm.stack && result == RUN_OK) {
       printValue(vm.stackTop - 1);
     }
 
@@ -67,6 +73,10 @@ static void runFile(const char* fileName) {
 
   struct Chunk compiled = compileString(source);
   free(source);
+
+#ifdef PRINT_DEBUG
+  debugChunk(compiled);
+#endif
 
   struct VM vm;
   initVM(&vm);

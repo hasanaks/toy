@@ -8,6 +8,10 @@
 #include <stddef.h>
 #include <stdio.h>
 
+#ifdef PRINT_DEBUG
+#include "debug.h"
+#endif
+
 struct Parser {
   struct Scanner scanner;
   struct Chunk compiling;
@@ -262,6 +266,8 @@ struct Chunk compileString(const char* string) {
 
   struct Scanner scanner;
   initScanner(&scanner, string);
+  debugScanner(scanner);
+
   parser.scanner = scanner;
 
   program(&parser);

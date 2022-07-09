@@ -55,7 +55,6 @@ static bool isNumber(char c) { return c >= '0' && c <= '9'; }
 static struct Token scanToken(struct Scanner* scanner, enum TokenType type) {
   struct Token t = makeToken(type, scanner->string + scanner->start,
                              scanner->current - scanner->start, scanner->line);
-  debugToken(t);
 
   return t;
 }
@@ -147,7 +146,6 @@ struct Token scanNext(struct Scanner* scanner) {
   skipWhitespace(scanner);
   if (atEnd(scanner)) {
     struct Token t = makeToken(TOKEN_EOF, NULL, 0, scanner->line);
-    debugToken(t);
     return t;
   }
 
