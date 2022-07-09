@@ -266,7 +266,10 @@ struct Chunk compileString(const char* string) {
 
   struct Scanner scanner;
   initScanner(&scanner, string);
+
+#ifdef PRINT_DEBUG
   debugScanner(scanner);
+#endif
 
   parser.scanner = scanner;
 
