@@ -14,7 +14,6 @@ struct VM {
 
 enum RunResult {
   RUN_OK,
-  RUN_PRINT,
   RUN_ERROR,
 };
 

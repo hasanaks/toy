@@ -52,7 +52,6 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
   if (vm->ip == NULL)
     return RUN_ERROR;
 
-  struct Value lastStackBottom = *vm->stack;
   resetStack(vm);
 
   for (;;) {
@@ -61,8 +60,8 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
         pushStack(vm, runningChunk->values.values[*(vm->ip++)]);
         break;
       case OP_POP:
-        popStack(vm);
-        break;
+	popStack(vm);
+	break;
       case OP_NEGATE: {
         struct Value a = popStack(vm);
         if (a.type != VALUE_NUMBER) {
@@ -209,11 +208,6 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
         break;
       }
       case OP_RETURN:
-        if (lastStackBottom.type != vm->stack->type ||
-            !compareValue(&lastStackBottom,
-                          vm->stack)) { // if the value has changed
-          return RUN_PRINT;
-        }
         return RUN_OK; // stop running
       default:
         return runtimeError("unknown opcode %d", *(vm->ip - 1));
