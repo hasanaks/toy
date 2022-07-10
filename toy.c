@@ -32,12 +32,8 @@ static void runRepl(void) {
     debugChunk(compiled);
 #endif
 
-    enum RunResult result = runVM(&vm, &compiled);
-
-    // if stackTop is not at the bottom
-    if (vm.stackTop != vm.stack && result == RUN_OK) {
-      printValue(vm.stackTop - 1);
-    }
+    runVM(&vm, &compiled);
+    printValue(vm.stackTop);
 
     deinitChunk(&compiled);
   }
