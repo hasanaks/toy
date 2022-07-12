@@ -55,6 +55,8 @@ static const char* tokenTypeString(enum TokenType type) {
       return "TOKEN_AND";
     case TOKEN_OR:
       return "TOKEN_OR";
+    case TOKEN_LET:
+      return "TOKEN_LET";
   }
 
   return "UNKNOWN_TOKEN";

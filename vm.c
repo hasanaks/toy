@@ -60,8 +60,8 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
         pushStack(vm, runningChunk->values.values[*(vm->ip++)]);
         break;
       case OP_POP:
-	popStack(vm);
-	break;
+        popStack(vm);
+        break;
       case OP_NEGATE: {
         struct Value a = popStack(vm);
         if (a.type != VALUE_NUMBER) {
@@ -145,7 +145,7 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
         break;
       }
       case OP_ASSIGNMENT: {
-        return RUN_ERROR;
+        return runtimeError("assignment not implemented");
       }
       case OP_EQUAL: {
         struct Value b = popStack(vm);

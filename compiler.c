@@ -235,6 +235,23 @@ static void consumeStatementTerminator(struct Parser* parser) {
                 "expected ';' or newline at the end of statement");
 }
 
+static void declStmt(struct Parser* parser) {
+  consume(parser, TOKEN_IDENTIFIER,
+          "expected an identifier in variable declaration");
+
+  if (match(parser, TOKEN_IDENTIFIER)) {
+    // TODO: emit bytecode for type
+  }
+
+  if (match(parser, TOKEN_EQUALS)) {
+    expr(parser);
+  }
+
+  emitByte(parser, OP_ASSIGNMENT);
+
+  consumeStatementTerminator(parser);
+}
+
 static void exprStmt(struct Parser* parser) {
   expr(parser);
   consumeStatementTerminator(parser);
@@ -244,6 +261,8 @@ static void exprStmt(struct Parser* parser) {
 static void stmt(struct Parser* parser) {
   if (match(parser, TOKEN_SEMICOLON) || match(parser, TOKEN_NEWLINE)) {
     // do nothing
+  } else if (match(parser, TOKEN_LET)) {
+    declStmt(parser);
   } else {
     exprStmt(parser);
   }

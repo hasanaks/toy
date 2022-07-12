@@ -27,6 +27,7 @@ enum TokenType {
   TOKEN_FALSE,
   TOKEN_AND,
   TOKEN_OR,
+  TOKEN_LET,
 
   TOKEN_EOF,
   TOKEN_ERROR,

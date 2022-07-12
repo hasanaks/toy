@@ -129,6 +129,11 @@ static struct Token scanKeyword(struct Scanner* scanner) {
         return scanToken(scanner, TOKEN_OR);
       }
       break;
+    case 'l':
+      if (matchString(scanner, "et", 1, 2)) {
+        return scanToken(scanner, TOKEN_LET);
+      }
+      break;
   }
 
   return scanToken(scanner, TOKEN_IDENTIFIER);
