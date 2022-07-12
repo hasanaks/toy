@@ -32,8 +32,9 @@ static void runRepl(void) {
     debugChunk(compiled);
 #endif
 
-    runVM(&vm, &compiled);
-    printValue(vm.stackTop);
+    if (runVM(&vm, &compiled) == RUN_OK) {
+      printValue(vm.stackTop);
+    }
 
     deinitChunk(&compiled);
   }
