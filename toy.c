@@ -26,15 +26,13 @@ static void runRepl(void) {
       return;
     }
 
-    struct Chunk compiled = compileString(buffer);
+    struct Chunk compiled = compileString(buffer, true);
 
 #ifdef PRINT_DEBUG
     debugChunk(compiled);
 #endif
 
-    if (runVM(&vm, &compiled) == RUN_OK) {
-      printValue(vm.stackTop);
-    }
+    runVM(&vm, &compiled);
 
     deinitChunk(&compiled);
   }
@@ -68,7 +66,7 @@ static void runFile(const char* fileName) {
     exit(1);
   }
 
-  struct Chunk compiled = compileString(source);
+  struct Chunk compiled = compileString(source, false);
   free(source);
 
 #ifdef PRINT_DEBUG

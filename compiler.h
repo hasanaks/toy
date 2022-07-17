@@ -6,4 +6,4 @@
 #include "scanner.h"
 #include "token.h"
 
-struct Chunk compileString(const char* string);
+struct Chunk compileString(const char* string, bool repl);

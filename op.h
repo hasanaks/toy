@@ -2,6 +2,7 @@
 
 enum OpCode {
   OP_RETURN,
+  OP_PRINT,
   OP_POP,
   OP_CONSTANT,
   OP_NEGATE,

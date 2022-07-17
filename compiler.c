@@ -20,6 +20,9 @@ struct Parser {
 
   bool panic;
   bool hadError;
+
+  bool repl;
+  bool emitPrint;
 };
 
 static void resetParser(struct Parser* parser) {
@@ -29,6 +32,7 @@ static void resetParser(struct Parser* parser) {
 
   parser->panic = false;
   parser->hadError = false;
+  parser->emitPrint = parser->repl;
 
   initChunk(&parser->compiling);
 }
@@ -235,6 +239,8 @@ static void assignmentExpr(struct Parser* parser) {
 
   struct Token last = parser->previous;
   while (match(parser, TOKEN_EQUALS)) {
+    parser->emitPrint = false;
+    
     if (last.type != TOKEN_IDENTIFIER) {
       parseError(parser, last, "not a valid assignment target");
     }
@@ -284,6 +290,9 @@ static void declStmt(struct Parser* parser) {
 static void exprStmt(struct Parser* parser) {
   expr(parser);
   consumeStatementTerminator(parser);
+  if (parser->emitPrint) {
+    emitByte(parser, OP_PRINT);
+  }
   emitByte(parser, OP_POP);
 }
 
@@ -325,9 +334,10 @@ static void program(struct Parser* parser) {
   emitByte(parser, OP_RETURN);
 }
 
-struct Chunk compileString(const char* string) {
+struct Chunk compileString(const char* string, bool repl) {
   struct Parser parser;
   resetParser(&parser);
+  parser.repl = repl;
 
   struct Scanner scanner;
   initScanner(&scanner, string);

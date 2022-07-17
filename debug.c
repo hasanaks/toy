@@ -99,6 +99,8 @@ size_t printInstruction(uint8_t* code) {
   switch (instruction) {
     case OP_RETURN:
       return simpleInstruction("RETURN");
+    case OP_PRINT:
+      return simpleInstruction("OP_PRINT");
     case OP_POP:
       return simpleInstruction("OP_POP");
     case OP_CONSTANT:
