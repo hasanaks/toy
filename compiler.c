@@ -116,13 +116,13 @@ static void atomExpr(struct Parser* parser) {
 static void unaryExpr(struct Parser* parser) {
   if (match(parser, TOKEN_PLUS) || match(parser, TOKEN_MINUS) ||
       match(parser, TOKEN_NOT)) {
-    struct Token operator= parser->previous;
+    struct Token op = parser->previous;
     unaryExpr(parser);
 
     // no special opcode for TOKEN_PLUS
-    if (operator.type == TOKEN_MINUS) {
+    if (op.type == TOKEN_MINUS) {
       emitByte(parser, OP_NEGATE);
-    } else if (operator.type == TOKEN_NOT) {
+    } else if (op.type == TOKEN_NOT) {
       emitByte(parser, OP_NOT);
     }
   } else {
@@ -157,11 +157,11 @@ static void comparisonExpr(struct Parser* parser) {
 
   while (match(parser, TOKEN_GREATER) || match(parser, TOKEN_GREATER_EQUALS) ||
          match(parser, TOKEN_LESSER) || match(parser, TOKEN_LESSER_EQUALS)) {
-    struct Token operator= parser->previous;
+    struct Token op = parser->previous;
 
     additiveExpr(parser);
 
-    switch (operator.type) {
+    switch (op.type) {
       case TOKEN_GREATER:
         emitByte(parser, OP_GREATER);
         break;
