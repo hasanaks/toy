@@ -1,7 +1,9 @@
 #pragma once
 
 #include "chunk.h"
+#include "map.h"
 #include "value.h"
+
 #include <inttypes.h>
 
 #define STACK_MAX 256
@@ -10,6 +12,8 @@ struct VM {
   uint8_t* ip;
   struct Value stack[STACK_MAX];
   struct Value* stackTop;
+
+  struct Map variables;
 };
 
 enum RunResult {

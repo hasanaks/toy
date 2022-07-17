@@ -1,8 +1,10 @@
 #include "map.h"
 
 #include "memory.h"
+#include "value.h"
 
 #include <inttypes.h>
+#include <stdio.h>
 #include <string.h>
 
 #define MAX_MAP_SIZE_MULTIPLIER 0.75
@@ -29,25 +31,6 @@ static uint64_t hash(struct String* string) {
 
 #undef FNV_OFFSET_BASIS
 #undef FNV_PRIME
-}
-
-bool findMap(struct Map* map, struct String* key) {
-  if (map->entries == NULL)
-    return false;
-
-  size_t index = hash(key) % (map->size - 1);
-
-  for (;;) { // not an infinite loop since there will always be an empty entry
-    struct Entry* entry = &map->entries[index++];
-
-    if (entry->key.length == 0) { // empty
-      return false;
-    }
-
-    if (memcmp(entry->key.str, key->str, key->length) == 0) { // found it
-      return true;
-    }
-  }
 }
 
 static void reallocateMap(struct Map* map) {
@@ -93,14 +76,15 @@ void setMap(struct Map* map, struct Entry* entry) {
     reallocateMap(map);
   }
 
-  size_t index = hash(&entry->key) % (map->size + 1);
+  size_t index = hash(&entry->key) % (map->size - 1);
 
   for (;;) {
     struct Entry* map_entry = &map->entries[index];
 
     if (map_entry->key.str != NULL) {
-      if (memcmp(map_entry->key.str, entry->key.str, map_entry->key.length) ==
-          0) { // found existing entry
+      if (map_entry->key.length == entry->key.length &&
+          memcmp(map_entry->key.str, entry->key.str, map_entry->key.length) ==
+              0) { // found existing entry
         map_entry->value = entry->value;
         break;
       } else {
@@ -109,6 +93,26 @@ void setMap(struct Map* map, struct Entry* entry) {
     } else { // empty slot -> new entry
       *map_entry = *entry;
       break;
+    }
+  }
+}
+
+struct Entry* getMap(struct Map* map, struct String* key) {
+  if (map->entries == NULL)
+    return NULL;
+
+  size_t index = hash(key) % (map->size - 1);
+
+  for (;;) { // not an infinite loop since there will always be an empty entry
+    struct Entry* entry = &map->entries[index++];
+
+    if (entry->key.length == 0) { // empty
+      return NULL;
+    }
+
+    if (key->length == entry->key.length &&
+        memcmp(entry->key.str, key->str, key->length) == 0) { // found it
+      return entry;
     }
   }
 }

@@ -1,6 +1,7 @@
 #include "chunk.h"
 
 #include "memory.h"
+#include "str.h"
 #include <stdlib.h>
 
 void initChunk(struct Chunk* chunk) {
@@ -11,6 +12,10 @@ void initChunk(struct Chunk* chunk) {
   chunk->values.values = NULL;
   chunk->values.length = 0;
   chunk->values.size = 0;
+
+  chunk->strings.strings = NULL;
+  chunk->strings.length = 0;
+  chunk->strings.size = 0;
 }
 
 void deinitChunk(struct Chunk* chunk) {
@@ -49,4 +54,19 @@ size_t addConstant(struct Chunk* chunk, struct Value value) {
   values->values[values->length++] = value;
 
   return values->length - 1;
+}
+
+size_t addString(struct Chunk* chunk, struct String string) {
+  struct StringArray* strings = &chunk->strings;
+
+  if (strings->length >= strings->size) {
+    size_t previousSize = strings->size;
+    strings->size = nextArraySize(previousSize);
+    strings->strings = reallocate(strings->strings, strings->size, previousSize,
+                                  sizeof(string));
+  }
+
+  strings->strings[strings->length++] = string;
+
+  return strings->length - 1;
 }

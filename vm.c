@@ -1,5 +1,7 @@
 #include "vm.h"
 
+#include "chunk.h"
+#include "map.h"
 #include "op.h"
 #include "value.h"
 
@@ -10,9 +12,14 @@
 void initVM(struct VM* vm) {
   vm->ip = NULL;
   vm->stackTop = vm->stack;
+
+  initMap(&vm->variables);
 }
 
-void deinitVM(struct VM* vm) { vm->ip = NULL; }
+void deinitVM(struct VM* vm) {
+  vm->ip = NULL;
+  deinitMap(&vm->variables);
+}
 
 // assumes types of values are the same
 static bool compareValue(struct Value* a, struct Value* b) {
@@ -144,8 +151,45 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
         pushStack(vm, BOOL_VALUE(a.as._bool || b.as._bool));
         break;
       }
-      case OP_ASSIGNMENT: {
-        return runtimeError("assignment not implemented");
+      case OP_ASSIGN: {
+        struct String name = runningChunk->strings.strings[*(vm->ip++)];
+        struct Entry* entry = getMap(&vm->variables, &name);
+
+        if (entry == NULL) {
+          return runtimeError("undefined variable '%.*s'", name.length,
+                              name.str);
+        } else {
+          entry->value = popStack(vm);
+        }
+        break;
+      }
+      case OP_DECLARE: {
+        struct String name = runningChunk->strings.strings[*(vm->ip++)];
+        struct Entry* entry = getMap(&vm->variables, &name);
+
+        if (entry != NULL) {
+          return runtimeError(
+              "redeclaration of previously defined variable '%.*s'",
+              name.length, name.str);
+        } else {
+          struct Entry newEntry = {
+              .key = name,
+              .value = popStack(vm),
+          };
+          setMap(&vm->variables, &newEntry);
+        }
+        break;
+      }
+      case OP_READ: {
+        struct String name = runningChunk->strings.strings[*(vm->ip++)];
+        struct Entry* entry = getMap(&vm->variables, &name);
+
+        if (entry == NULL) {
+          return runtimeError("unknown variable '%.*s'", name.length, name.str);
+        } else {
+          pushStack(vm, entry->value);
+        }
+        break;
       }
       case OP_EQUAL: {
         struct Value b = popStack(vm);

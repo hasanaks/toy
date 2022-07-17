@@ -119,8 +119,12 @@ size_t printInstruction(uint8_t* code) {
       return simpleInstruction("AND");
     case OP_OR:
       return simpleInstruction("OR");
-    case OP_ASSIGNMENT:
-      return simpleInstruction("OP_ASSIGNMENT");
+    case OP_ASSIGN:
+      return simpleInstruction("OP_ASSIGN");
+    case OP_DECLARE:
+      return simpleInstruction("OP_DECLARE");
+    case OP_READ:
+      return simpleInstruction("OP_READ");
     case OP_EQUAL:
       return simpleInstruction("EQUAL");
     case OP_NOT_EQUAL:

@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <string.h>
 
 #ifdef PRINT_DEBUG
 #include "debug.h"
@@ -91,6 +92,24 @@ static void emitByte(struct Parser* parser, uint8_t byte) {
   writeChunk(&parser->compiling, byte);
 }
 
+// duplicate string
+static char* duplicateString(const char* string, size_t length) {
+  char* dup = malloc(length);
+  strncpy(dup, string, length);
+  return dup;
+}
+
+// duplicate and add a string to the chunk
+static void emitString(struct Parser* parser, const char* string,
+                       size_t length) {
+  struct String str = {
+      .str = duplicateString(string, length),
+      .length = length,
+  };
+
+  emitByte(parser, addString(&parser->compiling, str));
+}
+
 static void expr(struct Parser* parser);
 
 static void atomExpr(struct Parser* parser) {
@@ -107,7 +126,9 @@ static void atomExpr(struct Parser* parser) {
     expr(parser);
     consume(parser, TOKEN_RPAREN, "expected ')'");
   } else if (match(parser, TOKEN_IDENTIFIER)) {
-    // ignore for now
+    struct Token identifier = parser->previous;
+    emitByte(parser, OP_READ);
+    emitString(parser, identifier.start, identifier.length);
   } else {
     parseError(parser, parser->current, "expected expression");
   }
@@ -219,7 +240,8 @@ static void assignmentExpr(struct Parser* parser) {
     }
 
     orExpr(parser);
-    emitByte(parser, OP_ASSIGNMENT);
+    emitByte(parser, OP_ASSIGN);
+    emitString(parser, last.start, last.length);
   }
 }
 
@@ -236,18 +258,25 @@ static void consumeStatementTerminator(struct Parser* parser) {
 }
 
 static void declStmt(struct Parser* parser) {
-  consume(parser, TOKEN_IDENTIFIER,
-          "expected an identifier in variable declaration");
+  consume(parser, TOKEN_IDENTIFIER, "expected an identifier after 'let'");
+
+  struct Token identifier = parser->previous;
+  struct String str = {
+      .length = identifier.length,
+      .str = duplicateString(identifier.start, identifier.length),
+  };
+
+  size_t i = addString(&parser->compiling, str);
 
   if (match(parser, TOKEN_IDENTIFIER)) {
     // TODO: emit bytecode for type
   }
 
-  if (match(parser, TOKEN_EQUALS)) {
-    expr(parser);
-  }
+  consume(parser, TOKEN_EQUALS, "expected '=' after declaration");
+  expr(parser);
 
-  emitByte(parser, OP_ASSIGNMENT);
+  emitByte(parser, OP_DECLARE);
+  emitByte(parser, i);
 
   consumeStatementTerminator(parser);
 }

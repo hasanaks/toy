@@ -16,6 +16,6 @@ struct Map {
 };
 
 void initMap(struct Map* map);
-bool findMap(struct Map* map, struct String* key);
+struct Entry* getMap(struct Map* map, struct String* key);
 void setMap(struct Map* map, struct Entry* entry);
 void deinitMap(struct Map* map);
