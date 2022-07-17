@@ -67,10 +67,10 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
         pushStack(vm, runningChunk->values.values[*(vm->ip++)]);
         break;
       case OP_PRINT: {
-	struct Value a = popStack(vm);
-	printValue(&a);
- 	pushStack(vm, a);
-	break;
+        struct Value a = popStack(vm);
+        printValue(&a);
+        pushStack(vm, a);
+        break;
       }
       case OP_POP:
         popStack(vm);
