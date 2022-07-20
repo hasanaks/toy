@@ -3,9 +3,15 @@
 #include <stdbool.h>
 
 enum ValueType {
+  // used for type inference
+  VALUE_NONE,
+
+  // used inside the Value struct
   VALUE_NUMBER,
   VALUE_BOOL,
 };
+
+const char* valueTypeStr(enum ValueType type);
 
 struct Value {
   enum ValueType type;

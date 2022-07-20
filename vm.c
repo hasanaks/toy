@@ -28,6 +28,7 @@ static bool compareValue(struct Value* a, struct Value* b) {
       return a->as.number == b->as.number;
     case VALUE_BOOL:
       return a->as._bool == b->as._bool;
+    case VALUE_NONE:; // uncomparable
   }
 
   return false;
@@ -165,22 +166,38 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
           return runtimeError("undefined variable '%.*s'", name.length,
                               name.str);
         } else {
-          entry->value = popStack(vm);
+          struct Value value = popStack(vm);
+
+          if (value.type != entry->value.type) {
+            return runtimeError(
+                "expected type '%s' but got '%s'",
+                valueTypeStr(entry->value.type), valueTypeStr(value.type));
+          }
+
+          entry->value = value;
         }
         break;
       }
       case OP_DECLARE: {
         struct String name = runningChunk->strings.strings[*(vm->ip++)];
         struct Entry* entry = getMap(&vm->variables, &name);
+        enum ValueType type = *(vm->ip++);
 
         if (entry != NULL) {
           return runtimeError(
               "redeclaration of previously defined variable '%.*s'",
               name.length, name.str);
         } else {
+          struct Value value = popStack(vm);
+
+          if (type != VALUE_NONE && value.type != type) {
+            return runtimeError("expected type '%s' but got '%s'",
+                                valueTypeStr(type), valueTypeStr(value.type));
+          }
+
           struct Entry newEntry = {
               .key = name,
-              .value = popStack(vm),
+              .value = value,
           };
           setMap(&vm->variables, &newEntry);
         }

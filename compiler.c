@@ -3,6 +3,7 @@
 #include "chunk.h"
 #include "op.h"
 #include "token.h"
+#include "value.h"
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -263,6 +264,16 @@ static void consumeStatementTerminator(struct Parser* parser) {
                 "expected ';' or newline at the end of statement");
 }
 
+static enum ValueType valueTypeFromToken(struct Token t) {
+  if (t.length == 6 && memcmp(t.start, "Number", t.length) == 0) {
+    return VALUE_NUMBER;
+  } else if (t.length == 4 && memcmp(t.start, "Bool", t.length) == 0) {
+    return VALUE_BOOL;
+  }
+
+  return VALUE_NONE;
+}
+
 static void declStmt(struct Parser* parser) {
   consume(parser, TOKEN_IDENTIFIER, "expected an identifier after 'let'");
 
@@ -274,8 +285,14 @@ static void declStmt(struct Parser* parser) {
 
   size_t i = addString(&parser->compiling, str);
 
+  enum ValueType type = VALUE_NONE;
+
   if (match(parser, TOKEN_IDENTIFIER)) {
-    // TODO: emit bytecode for type
+    type = valueTypeFromToken(parser->previous);
+
+    if (type == VALUE_NONE) {
+      parseError(parser, parser->previous, "unknown type");
+    }
   }
 
   consume(parser, TOKEN_EQUALS, "expected '=' after declaration");
@@ -283,6 +300,7 @@ static void declStmt(struct Parser* parser) {
 
   emitByte(parser, OP_DECLARE);
   emitByte(parser, i);
+  emitByte(parser, type);
 
   consumeStatementTerminator(parser);
 }
