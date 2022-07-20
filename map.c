@@ -118,9 +118,7 @@ struct Entry* getMap(struct Map* map, struct String* key) {
 }
 
 void deinitMap(struct Map* map) {
-  if (!map->entries) {
-    free(map->entries);
-  }
+  free(map->entries);
 
   initMap(map);
 }

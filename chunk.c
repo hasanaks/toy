@@ -19,13 +19,8 @@ void initChunk(struct Chunk* chunk) {
 }
 
 void deinitChunk(struct Chunk* chunk) {
-  if (chunk->code != NULL) {
-    free(chunk->code);
-  }
-
-  if (chunk->values.values != NULL) {
-    free(chunk->values.values);
-  }
+  free(chunk->code);
+  free(chunk->values.values);
 
   initChunk(chunk);
 }
