@@ -139,8 +139,12 @@ static struct Token scanKeyword(struct Scanner* scanner) {
   return scanToken(scanner, TOKEN_IDENTIFIER);
 }
 
+static bool isAlphaNumeric(char c) {
+  return isAlpha(c) || isNumber(c);
+}
+
 static struct Token scanIdentifier(struct Scanner* scanner) {
-  while (isAlpha(scanner->string[scanner->current])) {
+  while (isAlphaNumeric(scanner->string[scanner->current])) {
     scanner->current++;
   }
 
