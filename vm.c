@@ -169,9 +169,9 @@ enum RunResult runVM(struct VM* vm, struct Chunk* runningChunk) {
           struct Value value = popStack(vm);
 
           if (value.type != entry->value.type) {
-            return runtimeError(
-                "expected type '%s' but got '%s'",
-                valueTypeStr(entry->value.type), valueTypeStr(value.type));
+            return runtimeError("expected type '%s' but got '%s'",
+                                valueTypeStr(entry->value.type),
+                                valueTypeStr(value.type));
           }
 
           entry->value = value;
