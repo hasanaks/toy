@@ -83,6 +83,11 @@ void debugScanner(struct Scanner scanner) {
   }
 }
 
+size_t twoOperandInstruction(char* string, uint8_t operand0, uint8_t operand1) {
+  printf("%s, %d, %d\n", string, operand0, operand1);
+  return 3;
+}
+
 size_t oneOperandInstruction(char* string, uint8_t operand) {
   printf("%s, %d\n", string, operand);
   return 2;
@@ -122,11 +127,11 @@ size_t printInstruction(uint8_t* code) {
     case OP_OR:
       return simpleInstruction("OR");
     case OP_ASSIGN:
-      return simpleInstruction("OP_ASSIGN");
+      return oneOperandInstruction("OP_ASSIGN", code[1]);
     case OP_DECLARE:
-      return simpleInstruction("OP_DECLARE");
+      return twoOperandInstruction("OP_DECLARE", code[1], code[2]);
     case OP_READ:
-      return simpleInstruction("OP_READ");
+      return oneOperandInstruction("OP_READ", code[1]);
     case OP_EQUAL:
       return simpleInstruction("EQUAL");
     case OP_NOT_EQUAL:
